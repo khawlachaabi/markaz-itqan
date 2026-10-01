@@ -20,10 +20,8 @@ function adapter(store) {
   };
 }
 
-let cached;
-export default async (req) => {
-  cached = cached || adapter(getStore({ name: 'itqan', consistency: 'strong' }));
-  return handle(req, cached);
-};
+// يُنشأ المخزن في كل طلب: رمز الوصول إلى Blobs خاص بكل طلب وتنتهي صلاحيته،
+// فإعادة استعمال مخزن قديم في نسخة دافئة تسبب الخطأ "Token expired".
+export default async (req) => handle(req, adapter(getStore({ name: 'itqan', consistency: 'strong' })));
 
 export const config = { path: ['/', '/index.html', '/api/*', '/uploads/*'] };
